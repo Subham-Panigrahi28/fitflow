@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Send, Bot, User, Loader2 } from "lucide-react";
 import { generateResponse } from "../../lib/gemini";
+import { useIsMobile } from "../../hooks/use-mobile";
 
 interface Message {
   id: string;
@@ -22,6 +23,7 @@ const CoachChat = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   
   // Generate a welcome message when the component mounts
   useEffect(() => {
@@ -33,7 +35,7 @@ const CoachChat = () => {
         {
           id: "welcome",
           sender: "coach",
-          text: `Hello ${firstName}! I'm your AI Fitness Coach. I'm here to help you achieve your ${profile.goal?.toLowerCase() || "fitness"} goals with science-backed advice. What fitness questions can I answer for you today?`,
+          text: `Hello ${firstName}! I'm your AI Fitness Coach. How can I help with your ${profile.goal?.toLowerCase() || "fitness"} goals today?`,
           timestamp: new Date()
         }
       ]);
@@ -109,8 +111,8 @@ const CoachChat = () => {
   };
   
   return (
-    <div className="flex flex-col h-[700px] max-h-[80vh]">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className={`flex flex-col ${isMobile ? "h-[calc(100vh-180px)]" : "h-[700px]"} max-h-[80vh]`}>
+      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -119,7 +121,7 @@ const CoachChat = () => {
             }`}
           >
             <div
-              className={`flex max-w-[80%] ${
+              className={`flex max-w-[90%] md:max-w-[80%] ${
                 msg.sender === "user"
                   ? "flex-row-reverse items-end"
                   : "items-start"
@@ -146,7 +148,7 @@ const CoachChat = () => {
                     : "bg-white dark:bg-gray-800"
                 }`}
               >
-                <CardContent className="p-3 whitespace-pre-line">
+                <CardContent className="p-2 md:p-3 whitespace-pre-line text-sm md:text-base">
                   {msg.text}
                 </CardContent>
               </Card>
@@ -162,10 +164,10 @@ const CoachChat = () => {
               </div>
               
               <Card>
-                <CardContent className="p-3">
+                <CardContent className="p-2 md:p-3">
                   <div className="flex items-center space-x-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Coach is thinking...</span>
+                    <span className="text-sm md:text-base">Thinking...</span>
                   </div>
                 </CardContent>
               </Card>
@@ -176,16 +178,16 @@ const CoachChat = () => {
         <div ref={messagesEndRef} />
       </div>
       
-      <div className="border-t p-4">
+      <div className="border-t p-2 md:p-4 sticky bottom-0 bg-background">
         <form onSubmit={handleSendMessage} className="flex space-x-2">
           <Input
             placeholder="Ask your fitness coach a question..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             disabled={loading}
-            className="flex-1"
+            className="flex-1 text-sm md:text-base"
           />
-          <Button type="submit" disabled={loading || !message.trim()}>
+          <Button type="submit" size={isMobile ? "sm" : "default"} disabled={loading || !message.trim()}>
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
