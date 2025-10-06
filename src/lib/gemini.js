@@ -2,23 +2,28 @@
 //  AI Fitness Coach Response API
 // ===============================
 
-// Import the official Gemini SDK
+import dotenv from "dotenv";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// ✅ Initialize the SDK with your API key
-// IMPORTANT: Never hardcode this key in frontend code.
-// Put it in your .env file (server-side only)
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "AIzaSyDYHCWh2AMQjL9pFDE899u321IJNrwzTCQ");
+// Load environment variables
+dotenv.config();
+
+// Verify key presence
+if (!process.env.GOOGLE_API_KEY) {
+  console.error("❌ Missing GOOGLE_API_KEY in .env file");
+  process.exit(1);
+}
+
+// Initialize Gemini SDK
+const genAI = new GoogleGenerativeAI(process.env.AIzaSyDYHCWh2AMQjL9pFDE899u321IJNrwzTCQ);
 
 // ===============================
 //  Main Function
 // ===============================
 
 export const generateResponse = async (userContext, userMessage) => {
-  // Choose the latest stable Gemini model
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // use the stable model
 
-  // Build the full context-aware prompt
   const prompt = `
 Fitness Coach Assistant - User Context:
 - Name: ${userContext.name}
@@ -38,20 +43,26 @@ Respond with:
 `;
 
   try {
-    // Generate content from Gemini
+    // Request generation
     const result = await model.generateContent(prompt);
-
-    // Correct way to extract text
     const response = await result.response;
     const text = response.text();
 
-    // Return AI's reply
+    // Success
     return text;
-
   } catch (error) {
-    // Log full error for debugging
-    console.error("🔥 Error generating AI response:", error);
-    // Return friendly fallback message
+    // Detailed logging for diagnosis
+    console.error("🔥 Gemini API Error:");
+    console.error("Message:", error.message);
+    if (error.response) {
+      try {
+        const errText = await error.response.text();
+        console.error("Response:", errText);
+      } catch {
+        console.error("Response object present but unreadable");
+      }
+    }
+    // Return user-facing fallback
     return "I'm sorry, I couldn't process your request right now. Please try again later.";
   }
 };
