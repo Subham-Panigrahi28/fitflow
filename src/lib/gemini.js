@@ -8,7 +8,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // ✅ Initialize the SDK with your API key
 // IMPORTANT: Never hardcode this key in frontend code.
 // Put it in your .env file (server-side only)
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "YOUR_API_KEY_HERE");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY || "AIzaSyDYHCWh2AMQjL9pFDE899u321IJNrwzTCQ");
 
 // ===============================
 //  Main Function
