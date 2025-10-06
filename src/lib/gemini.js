@@ -2,7 +2,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize with the new API key
-const genAI = new GoogleGenerativeAI("AIzaSyDNxrBOOBxbQkLwAC5rj4h9vYpmu6tgLoE");
+const genAI = new GoogleGenerativeAI("AIzaSyBHwOTNimIYBjndXk1rTs1RKSMJVkLq-dw");
 
 export const generateResponse = async (userContext, userMessage) => {
   // Use gemini-1.5-pro instead of gemini-pro
